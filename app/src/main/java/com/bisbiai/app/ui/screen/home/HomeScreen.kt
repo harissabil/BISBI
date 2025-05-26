@@ -37,6 +37,7 @@ import com.bisbiai.app.R
 import com.bisbiai.app.core.utils.centerOnLocation
 import com.bisbiai.app.core.utils.getExpandedBounds
 import com.bisbiai.app.data.remote.dto.GetObjectDetailsResponse
+import com.bisbiai.app.ui.UserProgressViewModel
 import com.bisbiai.app.ui.screen.home.components.CustomMapMarker
 import com.bisbiai.app.ui.screen.home.components.ExpandableImageSelector
 import com.bisbiai.app.ui.screen.home.components.ExpandableUserStatsCard
@@ -58,6 +59,7 @@ import top.yukonga.miuix.kmp.basic.Scaffold
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    userProgressViewModel: UserProgressViewModel,
     onGoToObjectDetails: (GetObjectDetailsResponse) -> Unit,
 ) {
     val context = LocalContext.current
@@ -65,6 +67,7 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val progressData by userProgressViewModel.userStats.collectAsStateWithLifecycle() // Data dari UserProgressViewModel
     val isLocationEnabled by viewModel.isLocationEnabled.collectAsState()
     val locationRequestLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -216,10 +219,10 @@ fun HomeScreen(
                         vertical = MaterialTheme.spacing.medium
                     )
                     .padding(top = innerPadding.calculateTopPadding()),
-                currentLevel = 5,
-                currentXp = 140,
-                xpToNextLevel = 150,
-                dayStreak = 32
+                currentLevel = progressData?.level ?: 1,
+                currentXp = progressData?.currentXp ?: 0,
+                xpToNextLevel = progressData?.xpToNextLevel ?: 100,
+                dayStreak = progressData?.dayStreak ?: 0,
             )
 
             // Add the ExpandableImageSelector here
@@ -264,6 +267,7 @@ fun HomeScreen(
                             objectWithDetails = state.selectedDetectedObject!!,
                             detectObjectsResponse = it
                         )
+                        userProgressViewModel.addExperience(5) // Add experience when an object is clicked
                     }
                 )
             }

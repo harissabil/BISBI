@@ -12,18 +12,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +34,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.bisbiai.app.R
-import com.bisbiai.app.ui.components.UserStatsCard
+import com.bisbiai.app.ui.UserProgressViewModel
+import com.bisbiai.app.ui.screen.profile.component.AchievementsSection
+import com.bisbiai.app.ui.screen.profile.component.CompactUserStats
 import kotlinx.coroutines.flow.collectLatest
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
 import top.yukonga.miuix.kmp.basic.Scaffold
@@ -44,10 +47,17 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
+    userProgressViewModel: UserProgressViewModel,
     onNavigateToAuthScreen: () -> Unit,
 ) {
+    val progressData by userProgressViewModel.userStats.collectAsStateWithLifecycle() // Data dari UserProgressViewModel
+    val allAchievements by userProgressViewModel.achievements.collectAsStateWithLifecycle()
+
     val userData by viewModel.userData.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // State untuk filter achievement, dikelola di sini karena ProfileScreen yang "memiliki" section ini
+    var achievementFilter by remember { mutableStateOf(AchievementFilterType.SHOW_ALL) }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.errorMessage.collectLatest { message ->
@@ -61,20 +71,19 @@ fun ProfileScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // Agar bisa discroll jika ada konten lebih nanti
+            modifier = modifier.fillMaxSize()
         ) {
-            // Bagian Atas dengan Latar Belakang Primary
-            Box(
+            // Bagian Atas Terintegrasi: Profil dan Statistik
+            Column( // Menggunakan Column agar bisa menumpuk info profil dan statistik
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MiuixTheme.colorScheme.primary) // Latar belakang primary
-                    .padding(horizontal = 24.dp, vertical = 16.dp) // Padding yang cukup
+                    .background(MiuixTheme.colorScheme.primary)
+                    .padding(top = innerPadding.calculateTopPadding()) // Padding dari Scaffold
+                    .padding(horizontal = 24.dp, vertical = 20.dp) // Padding internal
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(top = innerPadding.calculateTopPadding())
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     // Foto Profil Bulat
                     SubcomposeAsyncImage(
@@ -132,22 +141,35 @@ fun ProfileScreen(
                         )
                     }
                 }
+
+                // Statistik Pengguna (Compact Version)
+                CompactUserStats(
+                    currentLevel = progressData?.level ?: 1,
+                    currentXp = progressData?.currentXp ?: 0,
+                    xpToNextLevel = progressData?.xpToNextLevel ?: 100,
+                    dayStreak = progressData?.dayStreak ?: 0,
+                    onPrimaryColor = MiuixTheme.colorScheme.onPrimary,
+                    onPrimaryVariantColor = MiuixTheme.colorScheme.onPrimary.copy(alpha = 0.75f),
+                    progressColor = Color.White, // Progress bar putih di atas biru
+                    progressTrackColor = Color.White.copy(alpha = 0.3f) // Track lebih redup
+                )
             }
 
             // Bagian Bawah (Kosong untuk saat ini)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f) // Agar mengisi sisa ruang jika ada
-                    .padding(16.dp),
+//                    .weight(1f) // Agar mengisi sisa ruang jika ada
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp) // Contoh penempatan di tengah
+                verticalArrangement = Arrangement.spacedBy(12.dp) // Contoh penempatan di tengah
             ) {
-                UserStatsCard(
-                    currentLevel = 5,
-                    currentXp = 140,
-                    xpToNextLevel = 150,
-                    dayStreak = 32
+                AchievementsSection(
+                    achievements = allAchievements,
+                    currentFilter = achievementFilter,
+                    onFilterChanged = { newFilter ->
+                        achievementFilter = newFilter
+                    }
                 )
             }
         }

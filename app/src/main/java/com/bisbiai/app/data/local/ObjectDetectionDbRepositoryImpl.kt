@@ -5,6 +5,7 @@ import com.bisbiai.app.data.local.entity.DetectedObjectEntity
 import com.bisbiai.app.data.local.entity.ExampleSentenceEntity
 import com.bisbiai.app.data.local.entity.ObjectDetailsEntity
 import com.bisbiai.app.data.local.entity.RelatedAdjectiveEntity
+import com.bisbiai.app.data.local.entity.ScenarioEntity
 import com.bisbiai.app.data.local.relation.DetailsWithRelatedData
 import com.bisbiai.app.data.local.relation.ObjectWithDetails
 import com.bisbiai.app.domain.repository.ObjectDetectionDbRepository
@@ -21,6 +22,10 @@ class ObjectDetectionDbRepositoryImpl @Inject constructor(
 
     override suspend fun saveObjectDetails(objectDetails: ObjectDetailsEntity): Long {
         return objectDetectionDao.insertObjectDetails(objectDetails)
+    }
+
+    override suspend fun saveScenario(scenarioEntity: ScenarioEntity): Long {
+        return objectDetectionDao.insertScenario(scenarioEntity)
     }
 
     override suspend fun saveRelatedAdjectives(relatedAdjectives: List<RelatedAdjectiveEntity>) {
@@ -70,6 +75,14 @@ class ObjectDetectionDbRepositoryImpl @Inject constructor(
 
     override fun getDetailsWithRelatedDataByObjectId(objectId: Long): Flow<DetailsWithRelatedData?> {
         return objectDetectionDao.getDetailsWithRelatedDataByObjectId(objectId)
+    }
+
+    override fun getAllScenarios(): Flow<List<ScenarioEntity>> {
+        return objectDetectionDao.getAllScenarios()
+    }
+
+    override suspend fun getScenarioById(id: Long): ScenarioEntity? {
+        return objectDetectionDao.getScenarioById(id)
     }
 
     override suspend fun getObjectDetailsByDetectedObjectIdList(detectedObjectId: Long): List<DetailsWithRelatedData> {

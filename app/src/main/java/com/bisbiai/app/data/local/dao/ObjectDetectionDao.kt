@@ -10,6 +10,7 @@ import com.bisbiai.app.data.local.entity.DetectedObjectEntity
 import com.bisbiai.app.data.local.entity.ExampleSentenceEntity
 import com.bisbiai.app.data.local.entity.ObjectDetailsEntity
 import com.bisbiai.app.data.local.entity.RelatedAdjectiveEntity
+import com.bisbiai.app.data.local.entity.ScenarioEntity
 import com.bisbiai.app.data.local.relation.DetailsWithRelatedData
 import com.bisbiai.app.data.local.relation.ObjectWithDetails
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,9 @@ interface ObjectDetectionDao {
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExampleSentences(exampleSentences: List<ExampleSentenceEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertScenario(scenarioEntity: ScenarioEntity): Long
     
     // Transaction to save object details with its related data
     @Transaction
@@ -91,6 +95,12 @@ interface ObjectDetectionDao {
     @Transaction
     @Query("SELECT * FROM object_details WHERE detectedObjectId = :objectId")
     fun getDetailsWithRelatedDataByObjectId(objectId: Long): Flow<DetailsWithRelatedData?>
+
+    @Query("SELECT * FROM scenario ORDER BY timestamp DESC")
+    fun getAllScenarios(): Flow<List<ScenarioEntity>>
+
+    @Query("SELECT * FROM scenario WHERE id = :id")
+    suspend fun getScenarioById(id: Long): ScenarioEntity?
 
     // Get object details by detected object ID as a list (not real-time)
     @Query("SELECT * FROM object_details WHERE detectedObjectId = :detectedObjectId")

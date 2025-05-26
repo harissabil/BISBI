@@ -3,13 +3,16 @@ package com.bisbiai.app.data.mapper
 import com.bisbiai.app.data.local.entity.ExampleSentenceEntity
 import com.bisbiai.app.data.local.entity.ObjectDetailsEntity
 import com.bisbiai.app.data.local.entity.RelatedAdjectiveEntity
+import com.bisbiai.app.data.local.entity.ScenarioEntity
 import com.bisbiai.app.data.local.relation.DetailsWithRelatedData
 import com.bisbiai.app.data.remote.dto.BoundingBox
 import com.bisbiai.app.data.remote.dto.Description
 import com.bisbiai.app.data.remote.dto.ExampleSentencesItem
+import com.bisbiai.app.data.remote.dto.GenerateLessonResponse
 import com.bisbiai.app.data.remote.dto.GetObjectDetailsResponse
 import com.bisbiai.app.data.remote.dto.ObjectName
 import com.bisbiai.app.data.remote.dto.RelatedAdjectivesItem
+import kotlinx.datetime.Clock.System
 
 // Entity to Response mappings
 fun DetailsWithRelatedData.toGetObjectDetailsResponse(): GetObjectDetailsResponse {
@@ -69,4 +72,26 @@ fun GetObjectDetailsResponse.toEntities(detectedObjectId: Long, boundingBox: Bou
     }
     
     return Triple(objectDetails, relatedAdjectiveEntities, exampleSentenceEntities)
+}
+
+fun ScenarioEntity.toGenerateLessonResponse(): GenerateLessonResponse {
+    return GenerateLessonResponse(
+        vocabulary = this.lessonData.vocabulary,
+        keyPhrases = this.lessonData.keyPhrases,
+        scenarioTitle = this.lessonData.scenarioTitle,
+        grammarTips = this.lessonData.grammarTips,
+    )
+}
+
+fun GenerateLessonResponse.toScenarioEntity(): ScenarioEntity {
+    return ScenarioEntity(
+        id = 0,
+        lessonData = GenerateLessonResponse(
+            vocabulary = this.vocabulary,
+            keyPhrases = this.keyPhrases,
+            scenarioTitle = this.scenarioTitle,
+            grammarTips = this.grammarTips
+        ),
+        timestamp = System.now()
+    )
 }

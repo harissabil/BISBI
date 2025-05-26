@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MicNone
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -30,15 +32,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.bisbiai.app.data.local.entity.AchievementEntity
+import com.bisbiai.app.data.remote.dto.GenerateLessonResponse
 import com.bisbiai.app.data.remote.dto.GetObjectDetailsResponse
+import com.bisbiai.app.ui.UserProgressViewModel
+import com.bisbiai.app.ui.components.AchievementUnlockedDialog
 import com.bisbiai.app.ui.navigation.components.CustomNavigationBar
 import com.bisbiai.app.ui.screen.auth.AuthScreen
 import com.bisbiai.app.ui.screen.home.HomeScreen
 import com.bisbiai.app.ui.screen.profile.ProfileScreen
+import com.bisbiai.app.ui.screen.scenario_detail.ScenarioDetailScreen
 import com.bisbiai.app.ui.screen.scenarios.ScenariosScreen
 import com.bisbiai.app.ui.screen.visual_lens.VisualLensScreen
 import com.bisbiai.app.ui.screen.visual_lens_detail.VisualLensDetailScreen
 import com.bisbiai.app.ui.screen.voice_gym.VoiceGymScreen
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.Json
 import top.yukonga.miuix.kmp.basic.NavigationItem
 import top.yukonga.miuix.kmp.basic.Scaffold
@@ -48,6 +56,26 @@ fun NavGraph(
     modifier: Modifier = Modifier,
     startDestination: Route,
 ) {
+    val userProgressViewModel: UserProgressViewModel = hiltViewModel()
+
+    var achievementToShowInDialog by remember { mutableStateOf<AchievementEntity?>(null) }
+
+    // Observasi event achievement unlocked
+    LaunchedEffect(key1 = Unit) { // atau key1 = userProgressViewModel jika Anda ingin restart jika ViewModel berubah
+        userProgressViewModel.achievementUnlockedEvent.collectLatest { achievement ->
+            // Tampilkan dialog, bukan snackbar
+            achievementToShowInDialog = achievement
+        }
+    }
+
+    // Tampilkan dialog jika achievementToShowInDialog tidak null
+    achievementToShowInDialog?.let { achievement ->
+        AchievementUnlockedDialog(
+            achievement = achievement,
+            onDismissRequest = { achievementToShowInDialog = null } // Tutup dialog
+        )
+    }
+
     val routes = listOf(
         Route.Auth,
         Route.Home,
@@ -55,7 +83,8 @@ fun NavGraph(
         Route.Scenarios,
         Route.VoiceGym,
         Route.Profile,
-        Route.VisualLensDetail("")
+        Route.VisualLensDetail(""),
+        Route.ScenarioDetail("")
     )
     val navigationBarItems = remember {
         listOf(
@@ -95,6 +124,7 @@ fun NavGraph(
         when (route) {
             Route.Auth -> false
             is Route.VisualLensDetail -> false
+            is Route.ScenarioDetail -> false
             else -> true
         }
     }
@@ -151,6 +181,7 @@ fun NavGraph(
             }
             composable<Route.Home> {
                 HomeScreen(
+                    userProgressViewModel = userProgressViewModel,
                     onGoToObjectDetails = { objectDetails ->
                         // Convert object to JSON string
                         val objectDetailsJson = Json.encodeToString(objectDetails)
@@ -160,6 +191,7 @@ fun NavGraph(
             }
             composable<Route.VisualLens> {
                 VisualLensScreen(
+                    userProgressViewModel = userProgressViewModel,
                     onGoToObjectDetails = { objectDetails ->
                         // Convert object to JSON string
                         val objectDetailsJson = Json.encodeToString(objectDetails)
@@ -173,15 +205,35 @@ fun NavGraph(
                 val objectDetails =
                     Json.decodeFromString<GetObjectDetailsResponse>(args.objectDetails)
                 VisualLensDetailScreen(
+                    userProgressViewModel = userProgressViewModel,
                     objectDetails = objectDetails,
                     onNavigateUp = { navController.navigateUp() }
                 )
             }
             composable<Route.Scenarios> {
-                ScenariosScreen()
+                ScenariosScreen(
+                    userProgressViewModel = userProgressViewModel,
+                    onGoToLessonDetail = { detail ->
+                        val lessonDetailJson = Json.encodeToString(detail)
+                        navController.navigate(Route.ScenarioDetail(lessonDetailJson))
+                    }
+                )
+            }
+            composable<Route.ScenarioDetail> {
+                val args = it.toRoute<Route.ScenarioDetail>()
+                // Convert JSON string back to object
+                val lessonDetail =
+                    Json.decodeFromString<GenerateLessonResponse>(args.lessonData)
+                ScenarioDetailScreen(
+                    userProgressViewModel = userProgressViewModel,
+                    lessonData = lessonDetail,
+                    onNavigateUp = { navController.navigateUp() },
+                )
             }
             composable<Route.VoiceGym> {
-                VoiceGymScreen()
+                VoiceGymScreen(
+                    userProgressViewModel = userProgressViewModel
+                )
             }
             composable<Route.Profile> {
                 ProfileScreen(
@@ -189,7 +241,8 @@ fun NavGraph(
                         navController.navigate(Route.Auth) {
                             popUpTo(Route.Auth) { inclusive = true }
                         }
-                    }
+                    },
+                    userProgressViewModel = userProgressViewModel
                 )
             }
         }

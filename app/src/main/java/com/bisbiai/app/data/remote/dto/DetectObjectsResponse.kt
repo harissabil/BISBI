@@ -8,7 +8,7 @@ data class DetectObjectsResponse(
 	val boundingBox: BoundingBox,
 
 	@field:SerializedName("confidence")
-	val confidence: Any,
+	val confidence: Double,
 
 	@field:SerializedName("objectName")
 	val objectName: String

@@ -25,6 +25,11 @@ sealed class Route {
     data object Scenarios : Route()
 
     @Serializable
+    data class ScenarioDetail(
+        val lessonData: String
+    ) : Route()
+
+    @Serializable
     data object VoiceGym : Route()
 
     @Serializable

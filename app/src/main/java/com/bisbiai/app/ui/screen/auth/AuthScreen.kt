@@ -1,6 +1,10 @@
 package com.bisbiai.app.ui.screen.auth
 
 import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,8 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,6 +72,45 @@ fun AuthScreen(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val requestMultiplePermissions = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.values.all { it }) {
+            // All permissions are granted
+        } else {
+            // Some permissions are denied
+            Timber.d("Some permissions are denied.")
+            scope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                val result = snackbarHostState
+                    .showSnackbar(
+                        message = "Please enable location services to continue.",
+                        actionLabel = "Enable",
+                        duration = SnackbarDuration.Long
+                    )
+                when (result) {
+                    SnackbarResult.ActionPerformed -> {
+                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        context.startActivity(intent)
+                    }
+
+                    SnackbarResult.Dismissed -> {
+                        Timber.d("Snackbar dismissed")
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        requestMultiplePermissions.launch(
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.errorMessage.collectLatest { message ->
             snackbarHostState.showSnackbar(message)
@@ -86,9 +131,11 @@ fun AuthScreen(
 //            OnboardingImage(
 //                painterId = R.drawable.bisbi_promo
 //            )
-            Box(modifier
-                .fillMaxSize()
-                .background(MiuixTheme.colorScheme.primary))
+            Box(
+                modifier
+                    .fillMaxSize()
+                    .background(MiuixTheme.colorScheme.primary)
+            )
 
             Column(
                 modifier = Modifier

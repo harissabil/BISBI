@@ -185,7 +185,8 @@ fun ObjectDetectionResultsDialog(
                                             textAlign = Paint.Align.LEFT
                                         }
                                         canvas.nativeCanvas.drawText(
-                                            result.objectName,
+                                            // confidence is in double, convert to integer percentage
+                                            result.objectName + " (${(result.confidence * 100).toInt()}%)",
                                             left + 8f, // Padding kiri untuk teks
                                             top - (labelHeight / 2) + (textPaint.descent() - textPaint.ascent()) / 2 - textPaint.descent() -2f , // Center text vertically
                                             textPaint

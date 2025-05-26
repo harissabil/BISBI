@@ -1,8 +1,13 @@
 package com.bisbiai.app.ui.screen.voice_gym // Sesuaikan dengan package Anda
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,21 +36,31 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.bisbiai.app.ui.UserProgressViewModel
+import com.bisbiai.app.ui.components.FullScreenLoading
+import com.bisbiai.app.ui.screen.voice_gym.components.PronunciationScoreDialog
 import com.bisbiai.app.ui.screen.voice_gym.components.PulsatingRecordingButton
+import com.bisbiai.app.ui.screen.voice_gym.components.toIntScore
 import com.bisbiai.app.ui.theme.BISBIAITheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
@@ -59,20 +74,20 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun VoiceGymScreen(
     modifier: Modifier = Modifier,
-    // viewModel: VoiceGymViewModel = hiltViewModel(), // Uncomment jika menggunakan ViewModel
+    userProgressViewModel: UserProgressViewModel,
+    viewModel: VoiceGymViewModel = hiltViewModel(), // Uncomment jika menggunakan ViewModel
 ) {
-    var phraseToPractice by remember { mutableStateOf("") }
-    // val state by viewModel.state.collectAsStateWithLifecycle() // Jika pakai ViewModel
-    var isRecording by remember { mutableStateOf(false) }
-    var recordingTimeMillis by remember { mutableStateOf(0L) }
+    val context = LocalContext.current
+    val state by viewModel.state.collectAsState() // Jika pakai ViewModel
+    var recordingTimeMillis by remember { mutableLongStateOf(0L) }
 
     // Efek untuk timer perekaman
-    LaunchedEffect(isRecording) {
-        if (isRecording) {
+    LaunchedEffect(state.isRecording) {
+        if (state.isRecording) {
             recordingTimeMillis = 0L // Reset timer saat mulai
-            while (isRecording) {
+            while (state.isRecording) {
                 delay(1000) // Update setiap detik
-                if (isRecording) { // Cek lagi karena state bisa berubah saat delay
+                if (state.isRecording) { // Cek lagi karena state bisa berubah saat delay
                     recordingTimeMillis += 1000
                 }
             }
@@ -80,7 +95,7 @@ fun VoiceGymScreen(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val isPhraseEntered = phraseToPractice.isNotBlank()
+    val isPhraseEntered = state.phraseToPractice.isNotBlank()
 
     val examplePhrases = remember {
         listOf(
@@ -90,7 +105,25 @@ fun VoiceGymScreen(
             "I would like to book a table for two."
         )
     }
-    var currentExampleIndex by remember { mutableStateOf(0) }
+    var currentExampleIndex by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.errorMessage.collectLatest { message ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message = message)
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.startRecording(context)
+        } else {
+            // Show error about permission denial
+            viewModel.showError("Microphone permission is required for recording.")
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -128,8 +161,8 @@ fun VoiceGymScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     TextField(
-                        value = phraseToPractice,
-                        onValueChange = { phraseToPractice = it },
+                        value = state.phraseToPractice,
+                        onValueChange = viewModel::setReferenceText,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 80.dp),
@@ -141,15 +174,18 @@ fun VoiceGymScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Column(
-                        modifier = Modifier.fillMaxWidth().animateContentSize(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Tombol "Use Example"
                         OutlinedButton(
                             onClick = {
-                                phraseToPractice = examplePhrases[currentExampleIndex]
-                                currentExampleIndex = (currentExampleIndex + 1) % examplePhrases.size
+                                viewModel.setReferenceText(examplePhrases[currentExampleIndex])
+                                currentExampleIndex =
+                                    (currentExampleIndex + 1) % examplePhrases.size
                             },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth(),
@@ -178,8 +214,10 @@ fun VoiceGymScreen(
                         if (isPhraseEntered) {
                             OutlinedButton(
                                 onClick = {
-                                    // Aksi untuk mendengarkan frasa (Text-to-Speech)
-                                    // Contoh: viewModel.listenToPhrase(phraseToPractice)
+                                    viewModel.playAudio(
+                                        state.phraseToPractice,
+                                        context
+                                    )
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(8.dp),
@@ -218,10 +256,13 @@ fun VoiceGymScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp, horizontal = 16.dp), // Padding lebih besar vertikal
+                        .padding(
+                            vertical = 32.dp,
+                            horizontal = 16.dp
+                        ), // Padding lebih besar vertikal
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (!isRecording) {
+                    if (!state.isRecording) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
@@ -233,12 +274,16 @@ fun VoiceGymScreen(
                                 .clickable(
                                     enabled = isPhraseEntered,
                                     onClick = {
-                                        // Aksi ketika tombol rekam ditekan
-                                        // Contoh: viewModel.startRecording() atau toggleRecording()
-                                        isRecording = true // Mulai perekaman
+                                        // Check permission before recording
+                                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+                                            == PackageManager.PERMISSION_GRANTED) {
+                                            viewModel.startRecording(context)
+                                        } else {
+                                            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                                        }
                                     },
-                                    indication = null, // Tidak ada ripple jika tidak diinginkan
-                                    interactionSource = remember { MutableInteractionSource() }
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = LocalIndication.current
                                 )
                         ) {
                             Icon(
@@ -264,9 +309,7 @@ fun VoiceGymScreen(
                             baseColor = Color(0xFFe74848), // Warna dasar saat merekam (merah)
                             pulseColor = Color(0xFFe74848), // Warna saat pulsasi (merah muda)
                             onClick = {
-                                // Aksi ketika tombol rekam ditekan saat merekam
-                                // Contoh: viewModel.stopRecording() atau toggleRecording()
-                                isRecording = false // Hentikan perekaman
+                                viewModel.stopRecording()
                             }
                         )
 
@@ -289,8 +332,7 @@ fun VoiceGymScreen(
 
                         Button(
                             onClick = {
-                                isRecording = false
-                                // TODO: viewModel.stopRecording()
+                                viewModel.stopRecording()
                             },
                             modifier = Modifier
                                 .fillMaxWidth(0.8f) // Tombol tidak full width
@@ -315,6 +357,20 @@ fun VoiceGymScreen(
                 }
             }
         }
+
+        if (state.pronunciationAssessmentResponse != null) {
+            PronunciationScoreDialog(
+                assessmentData = state.pronunciationAssessmentResponse,
+                onDismissRequest = {
+                    userProgressViewModel.onPronunciationScored(state.pronunciationAssessmentResponse!!.pronunciationScore.toIntScore())
+                    viewModel.dismissDialog()
+                }
+            )
+        }
+
+        if (state.isLoading) {
+            FullScreenLoading()
+        }
     }
 }
 
@@ -326,10 +382,16 @@ fun formatMillisToMmSs(millis: Long): String {
 
 
 @Preview(showBackground = true, name = "Voice Gym Empty")
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Voice Gym Empty Dark")
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Voice Gym Empty Dark"
+)
 @Composable
 fun VoiceGymScreenPreviewEmpty() {
     BISBIAITheme {
-        VoiceGymScreen()
+        VoiceGymScreen(
+            userProgressViewModel = hiltViewModel() // Ganti dengan ViewModel yang sesuai
+        )
     }
 }

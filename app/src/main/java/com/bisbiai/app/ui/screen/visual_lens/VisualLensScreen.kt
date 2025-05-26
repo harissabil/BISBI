@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bisbiai.app.R
 import com.bisbiai.app.data.remote.dto.GetObjectDetailsResponse
+import com.bisbiai.app.ui.UserProgressViewModel
 import com.bisbiai.app.ui.components.FullScreenLoading
 import com.bisbiai.app.ui.screen.visual_lens.components.HistoryBottomSheet
 import com.bisbiai.app.ui.screen.visual_lens.components.ObjectDetectionResultsDialog
@@ -54,9 +55,10 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 @Composable
 fun VisualLensScreen(
     modifier: Modifier = Modifier,
+    userProgressViewModel: UserProgressViewModel,
     cameraPreviewViewModel: CameraPreviewViewModel = hiltViewModel(),
     visualLensViewModel: VisualLensViewModel = hiltViewModel(),
-    onGoToObjectDetails: (GetObjectDetailsResponse) -> Unit
+    onGoToObjectDetails: (GetObjectDetailsResponse) -> Unit,
 ) {
     val context = LocalContext.current
     val state by visualLensViewModel.state.collectAsStateWithLifecycle()
@@ -107,7 +109,10 @@ fun VisualLensScreen(
                         // or it's a color intended for such overlays.
                         // Making it slightly more opaque than the control bar for emphasis.
                         Color.Black.copy(alpha = 0.5f), // Or Color.Black.copy(alpha = 0.4f)
-                        shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp) // Soft rounded corners for the background
+                        shape = RoundedCornerShape(
+                            bottomStart = 16.dp,
+                            bottomEnd = 16.dp
+                        ) // Soft rounded corners for the background
                     )
                     .padding(top = innerPadding.calculateTopPadding())
                     // Padding inside the text's background, around the text itself
@@ -214,10 +219,14 @@ fun VisualLensScreen(
                 originalImageWidth = state.originalImageWidth!!,
                 originalImageHeight = state.originalImageHeight!!,
                 isLoading = state.isDialogLoading, // Pass loading state specific to detection
-                onDismissRequest = { visualLensViewModel.dismissImageDialog() },
+                onDismissRequest = {
+                    visualLensViewModel.dismissImageDialog()
+                    userProgressViewModel.onVisualScanCompleted() // Update user progress
+                },
                 onObjectClick = {
                     isHistoryBottomSheetVisible = false
                     visualLensViewModel.getObjectDetails(it)
+                    userProgressViewModel.addExperience(5)
                 }
             )
         }

@@ -13,7 +13,7 @@ interface AzureRepository {
     suspend fun textToSpeech(text: String): Resource<ByteArray>
     suspend fun generateLesson(
         scenarioDescription: String,
-        userProficiencyLeve: String,
+        userProficiencyLevel: String,
     ): Resource<GenerateLessonResponse>
     suspend fun assessPronunciation(
         audio: MultipartBody.Part,

@@ -1,7 +1,9 @@
 package com.bisbiai.app.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class GenerateLessonResponse(
 
 	@field:SerializedName("vocabulary")
@@ -17,12 +19,14 @@ data class GenerateLessonResponse(
 	val grammarTips: List<GrammarTipsItem>
 )
 
+@Serializable
 data class KeyPhrasesItem(
 
 	@field:SerializedName("phrase")
 	val phrase: Phrase
 )
 
+@Serializable
 data class Example(
 
 	@field:SerializedName("en")
@@ -32,6 +36,7 @@ data class Example(
 	val id: String
 )
 
+@Serializable
 data class Tip(
 
 	@field:SerializedName("en")
@@ -41,12 +46,14 @@ data class Tip(
 	val id: String
 )
 
+@Serializable
 data class VocabularyItem(
 
 	@field:SerializedName("term")
 	val term: Term
 )
 
+@Serializable
 data class GrammarTipsItem(
 
 	@field:SerializedName("tip")
@@ -56,6 +63,7 @@ data class GrammarTipsItem(
 	val example: Example
 )
 
+@Serializable
 data class ScenarioTitle(
 
 	@field:SerializedName("en")
@@ -65,6 +73,7 @@ data class ScenarioTitle(
 	val id: String
 )
 
+@Serializable
 data class Term(
 
 	@field:SerializedName("en")
@@ -74,6 +83,7 @@ data class Term(
 	val id: String
 )
 
+@Serializable
 data class Phrase(
 
 	@field:SerializedName("en")

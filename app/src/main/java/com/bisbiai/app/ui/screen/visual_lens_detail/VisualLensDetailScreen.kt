@@ -39,6 +39,7 @@ import com.bisbiai.app.data.remote.dto.ExampleSentencesItem
 import com.bisbiai.app.data.remote.dto.GetObjectDetailsResponse
 import com.bisbiai.app.data.remote.dto.ObjectName
 import com.bisbiai.app.data.remote.dto.RelatedAdjectivesItem
+import com.bisbiai.app.ui.UserProgressViewModel
 import com.bisbiai.app.ui.components.BaseTopAppBar
 import com.bisbiai.app.ui.components.FullScreenLoading
 import com.bisbiai.app.ui.screen.visual_lens_detail.components.AdjectiveChip
@@ -55,6 +56,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 @Composable
 fun VisualLensDetailScreen(
     modifier: Modifier = Modifier,
+    userProgressViewModel: UserProgressViewModel,
     objectDetails: GetObjectDetailsResponse,
     onNavigateUp: () -> Unit,
     viewModel: VisualLensDetailViewModel = hiltViewModel(),
@@ -241,6 +243,6 @@ fun VisualLensDetailScreenPreview() {
 
     // Using MaterialTheme for basic theming. Replace with your app's theme if you have one.
     BISBIAITheme {
-        VisualLensDetailScreen(objectDetails = sampleDetails, onNavigateUp = {})
+        VisualLensDetailScreen(objectDetails = sampleDetails, onNavigateUp = {}, userProgressViewModel = hiltViewModel())
     }
 }

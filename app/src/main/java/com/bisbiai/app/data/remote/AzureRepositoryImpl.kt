@@ -64,13 +64,13 @@ class AzureRepositoryImpl @Inject constructor(
 
     override suspend fun generateLesson(
         scenarioDescription: String,
-        userProficiencyLeve: String,
+        userProficiencyLevel: String,
     ): Resource<GenerateLessonResponse> =
         try {
             val response = azureApiService.generateLesson(
                 GenerateLessonRequest(
                     scenarioDescription = scenarioDescription,
-                    userProficiencyLevel = userProficiencyLeve
+                    userProficiencyLevel = userProficiencyLevel
                 )
             )
             if (response.isSuccessful) {
