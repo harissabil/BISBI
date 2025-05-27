@@ -30,7 +30,7 @@ fun XpChip(
     backgroundColor: Color,
     textColor: Color = Color.White,
     icon: androidx.compose.ui.graphics.vector.ImageVector? = null, // Ikon opsional
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     var isVisible by rememberSaveable { mutableStateOf(true) }
 

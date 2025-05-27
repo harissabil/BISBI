@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BISBI AI"
+rootProject.name = "BISBI"
 include(":app")
  

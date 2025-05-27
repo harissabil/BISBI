@@ -42,15 +42,19 @@ import java.util.Locale
 @Composable
 fun AchievementListItem(
     achievement: AchievementEntity,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val isUnlocked = achievement.isUnlocked
     val contentAlpha = if (isUnlocked) 1f else 0.6f // Konten lebih redup jika belum unlock
 
-    val goldBorder = if (isSystemInDarkTheme()) Color(0xFFFFD700) else Color(0xFFB8860B) // Warna emas untuk border
+    val goldBorder =
+        if (isSystemInDarkTheme()) Color(0xFFFFD700) else Color(0xFFB8860B) // Warna emas untuk border
 
     val borderModifier = if (isUnlocked) {
-        Modifier.border(BorderStroke(1.dp, goldBorder), shape = RoundedCornerShape(12.dp)) // Border emas untuk yang sudah unlock
+        Modifier.border(
+            BorderStroke(1.dp, MiuixTheme.colorScheme.outline),
+            shape = RoundedCornerShape(12.dp)
+        ) // Border emas untuk yang sudah unlock
     } else {
         Modifier // Border biasa untuk yang belum
     }
@@ -143,7 +147,14 @@ fun AchievementListItemUnlockedPreview() {
     BISBIAITheme {
         AchievementListItem(
             achievement = AchievementEntity(
-                "PREVIEW_UNLOCKED", "Super Scanner", "You scanned 10 items!", "🏆", 25, true, Date(), 10
+                "PREVIEW_UNLOCKED",
+                "Super Scanner",
+                "You scanned 10 items!",
+                "🏆",
+                25,
+                true,
+                Date(),
+                10
             )
         )
     }

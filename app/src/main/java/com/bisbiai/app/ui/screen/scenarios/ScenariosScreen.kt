@@ -1,6 +1,7 @@
 package com.bisbiai.app.ui.screen.scenarios
 
 import android.content.res.Configuration
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -109,6 +111,7 @@ fun ScenariosScreen(
 
             item {
                 Card(
+                    modifier = Modifier.border(1.dp, MiuixTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
                     cornerRadius = 16.dp,
                 ) {
                     Column(

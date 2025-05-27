@@ -4,6 +4,7 @@ package com.bisbiai.app.ui.screen.profile.component
 // ... (import yang sudah ada)
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.EmojiEvents
@@ -58,14 +60,16 @@ fun AchievementsSection(
     var dropdownExpanded by remember { mutableStateOf(false) }
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().border(1.dp, MiuixTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
         cornerRadius = 16.dp,
         color = MiuixTheme.colorScheme.surfaceContainer // Warna card section
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header dengan Filter (Sama seperti sebelumnya)
             Row(
-                modifier = Modifier.fillMaxWidth().animateContentSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

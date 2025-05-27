@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.bisbiai.app" />
+                  <option name="mobileSdkAppId" value="1:999948051645:android:5d43b05e8e8df27f9543d4" />
+                  <option name="projectId" value="bisbi-ai" />
+                  <option name="projectNumber" value="999948051645" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
