@@ -12,7 +12,7 @@ import com.bisbiai.app.data.local.entity.ObjectDetailsEntity
 import com.bisbiai.app.data.local.entity.RelatedAdjectiveEntity
 import com.bisbiai.app.data.location.current_location.LocationTracker
 import com.bisbiai.app.data.mapper.toGetObjectDetailsResponse
-import com.bisbiai.app.data.remote.dto.DetectObjectsResponse
+import com.bisbiai.app.data.remote.dto.DetectObjectItem
 import com.bisbiai.app.domain.repository.AzureRepository
 import com.bisbiai.app.domain.repository.ObjectDetectionDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -168,7 +168,7 @@ class VisualLensViewModel @Inject constructor(
         }
     }
 
-    fun getObjectDetails(detectObjectsResponse: DetectObjectsResponse) = viewModelScope.launch {
+    fun getObjectDetails(detectObjectsResponse: DetectObjectItem) = viewModelScope.launch {
         if (_state.value.isDialogLoading || _state.value.isLoading) return@launch
 
         _state.update { it.copy(isDialogLoading = true) }

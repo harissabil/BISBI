@@ -121,8 +121,8 @@ fun HistoryItem(
     onClick: (detectedObject: DetectedObjectEntity) -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    val objectNames = remember(detectedObject.detectObjects) {
-        detectedObject.detectObjects.joinToString(", ") { it.objectName }.ifEmpty { "No objects detected" }
+    val objectNames = remember(detectedObject.detectObjects.predictions) {
+        detectedObject.detectObjects.predictions.joinToString(", ") { it.objectName }.ifEmpty { "No objects detected" }
     }
     val formattedTimestamp = remember(detectedObject.timestamp) {
         detectedObject.timestamp.toDdMmYyyyHhMmSs()

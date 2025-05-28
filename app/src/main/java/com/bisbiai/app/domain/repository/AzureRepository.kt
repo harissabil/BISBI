@@ -8,7 +8,7 @@ import com.bisbiai.app.data.remote.dto.PronunciationAssessmentResponse
 import okhttp3.MultipartBody
 
 interface AzureRepository {
-    suspend fun detectObjects(image: MultipartBody.Part): Resource<List<DetectObjectsResponse>>
+    suspend fun detectObjects(image: MultipartBody.Part): Resource<DetectObjectsResponse>
     suspend fun getObjectDetails(image: MultipartBody.Part): Resource<GetObjectDetailsResponse>
     suspend fun textToSpeech(text: String): Resource<ByteArray>
     suspend fun generateLesson(

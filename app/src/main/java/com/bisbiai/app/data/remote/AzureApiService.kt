@@ -20,7 +20,7 @@ interface AzureApiService {
     @POST("/api/DetectObjectsVisual")
     suspend fun detectObjects(
         @Part image: MultipartBody.Part
-    ): Response<List<DetectObjectsResponse>>
+    ): Response<DetectObjectsResponse>
 
     @Multipart
     @POST("/api/GetObjectDetailsVisual")
