@@ -39,6 +39,7 @@ import com.bisbiai.app.ui.UserProgressViewModel
 import com.bisbiai.app.ui.components.AchievementUnlockedDialog
 import com.bisbiai.app.ui.navigation.components.CustomNavigationBar
 import com.bisbiai.app.ui.screen.auth.AuthScreen
+import com.bisbiai.app.ui.screen.flashcard.FlashcardScreen
 import com.bisbiai.app.ui.screen.home.HomeScreen
 import com.bisbiai.app.ui.screen.profile.ProfileScreen
 import com.bisbiai.app.ui.screen.scenario_detail.ScenarioDetailScreen
@@ -188,6 +189,9 @@ fun NavGraph(
                         navController.navigate(Route.VisualLensDetail(objectDetailsJson))
                     }
                 )
+            }
+            composable<Route.Flashcard> {
+                FlashcardScreen()
             }
             composable<Route.VisualLens> {
                 VisualLensScreen(

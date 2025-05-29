@@ -245,7 +245,8 @@ fun HomeScreen(
                             )
                         )
                     }
-                }
+                },
+                onFlashcardClick = {}
             )
 
             val showDetectionDialog = state.imageFile != null &&

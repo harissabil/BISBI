@@ -12,6 +12,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -22,11 +23,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bisbiai.app.data.local.relation.ObjectWithDetails
@@ -40,6 +43,7 @@ fun ExpandableImageSelector(
     onToggle: () -> Unit,
     items: List<ObjectWithDetails>,
     onItemClick: (ObjectWithDetails) -> Unit,
+    onFlashcardClick: () -> Unit,
 ) {
     val primaryBlue = Color(0xFF3F51B5)
 
@@ -109,15 +113,30 @@ fun ExpandableImageSelector(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            FloatingActionButton(
-                onClick = onToggle,
-                containerColor = MiuixTheme.colorScheme.primary
+            Column(
+                modifier = Modifier.clip(RoundedCornerShape(24.dp)),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Layers, // Or Icons.Filled.ChevronLeft
-                    contentDescription = "Expand Selector",
-                    tint = Color.White // Icon color
-                )
+                FloatingActionButton(
+                    onClick = onFlashcardClick,
+                    containerColor = MiuixTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Quiz, // Or Icons.Filled.ChevronLeft
+                        contentDescription = "Flashcard",
+                        tint = Color.White // Icon color
+                    )
+                }
+                FloatingActionButton(
+                    onClick = onToggle,
+                    containerColor = MiuixTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Layers, // Or Icons.Filled.ChevronLeft
+                        contentDescription = "Expand Selector",
+                        tint = Color.White // Icon color
+                    )
+                }
             }
         }
     }
