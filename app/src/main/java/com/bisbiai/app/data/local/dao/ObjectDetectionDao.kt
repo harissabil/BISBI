@@ -91,6 +91,9 @@ interface ObjectDetectionDao {
     @Transaction
     @Query("SELECT * FROM detected_objects ORDER BY timestamp DESC")
     fun getAllObjectsWithDetails(): Flow<List<ObjectWithDetails>>
+
+    @Query("SELECT * FROM object_details")
+    suspend fun getAllDetectedObjectDetails(): List<ObjectDetailsEntity>
     
     @Transaction
     @Query("SELECT * FROM object_details WHERE detectedObjectId = :objectId")
