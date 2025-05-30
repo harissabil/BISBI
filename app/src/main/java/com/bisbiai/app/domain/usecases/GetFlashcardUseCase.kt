@@ -16,8 +16,8 @@ class GetFlashcardUseCase @Inject constructor(
                     translation = detectedObjectDetail.objectNameId,
                 )
             }
-        val phrases =
-            objectDetectionDbRepository.getAllScenarios().first().flatMap { scenarioEntity ->
+        val scenarios = objectDetectionDbRepository.getAllScenarios().first()
+        val phrases = scenarios.flatMap { scenarioEntity ->
                 scenarioEntity.lessonData.keyPhrases.map { phrase ->
                     Flashcard(
                         objectName = phrase.phrase.en,
@@ -25,8 +25,7 @@ class GetFlashcardUseCase @Inject constructor(
                     )
                 }
             }
-        val terms =
-            objectDetectionDbRepository.getAllScenarios().first().flatMap { scenarioEntity ->
+        val terms = scenarios.flatMap { scenarioEntity ->
                 scenarioEntity.lessonData.vocabulary.map { term ->
                     Flashcard(
                         objectName = term.term.en,
