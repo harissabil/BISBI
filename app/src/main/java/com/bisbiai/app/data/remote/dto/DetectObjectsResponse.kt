@@ -3,28 +3,33 @@ package com.bisbiai.app.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 data class DetectObjectsResponse(
+    @SerializedName("predictions")
+    val predictions: List<DetectObjectItem>,
+)
 
-	@field:SerializedName("boundingBox")
-	val boundingBox: BoundingBox,
+data class DetectObjectItem(
 
-	@field:SerializedName("confidence")
-	val confidence: Double,
+    @field:SerializedName("boundingBox")
+    val boundingBox: BoundingBox,
 
-	@field:SerializedName("objectName")
-	val objectName: String
+    @field:SerializedName("confidence")
+    val confidence: Double,
+
+    @field:SerializedName("objectName")
+    val objectName: String,
 )
 
 data class BoundingBox(
 
-	@field:SerializedName("x")
-	val x: Int,
+    @field:SerializedName("x")
+    val x: Int,
 
-	@field:SerializedName("width")
-	val width: Int,
+    @field:SerializedName("width")
+    val width: Int,
 
-	@field:SerializedName("y")
-	val y: Int,
+    @field:SerializedName("y")
+    val y: Int,
 
-	@field:SerializedName("height")
-	val height: Int
+    @field:SerializedName("height")
+    val height: Int,
 )

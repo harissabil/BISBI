@@ -11,12 +11,13 @@ import com.bisbiai.app.domain.repository.AzureRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import javax.inject.Inject
 
 class AzureRepositoryImpl @Inject constructor(
     private val azureApiService: AzureApiService,
 ) : AzureRepository {
-    override suspend fun detectObjects(image: MultipartBody.Part): Resource<List<DetectObjectsResponse>> =
+    override suspend fun detectObjects(image: MultipartBody.Part): Resource<DetectObjectsResponse> =
         try {
             val response = azureApiService.detectObjects(image)
             if (response.isSuccessful) {
@@ -24,7 +25,16 @@ class AzureRepositoryImpl @Inject constructor(
                     Resource.Success(it)
                 } ?: Resource.Error("No data received")
             } else {
-                Resource.Error("Error: ${response.code()} - ${response.message()}")
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    val json = JSONObject(errorBody ?: "")
+                    val error = json.optString("error")
+                    val details = json.optString("details")
+                    if (details.isNotEmpty()) "$error\nDetails: $details" else error
+                } catch (_: Exception) {
+                    "Error: ${response.code()} - ${response.message()}"
+                }
+                Resource.Error(errorMessage)
             }
         } catch (e: Exception) {
             Resource.Error("Failed to detect objects: ${e.message}")
@@ -38,7 +48,17 @@ class AzureRepositoryImpl @Inject constructor(
                     Resource.Success(it)
                 } ?: Resource.Error("No data received")
             } else {
-                Resource.Error("Error: ${response.code()} - ${response.message()}")
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    val json = JSONObject(errorBody ?: "")
+                    val error = json.optString("error")
+                    val details = json.optString("details")
+                    if (details.isNotEmpty()) "$error\nDetails: $details" else error
+                } catch (_: Exception) {
+                    "Error: ${response.code()} - ${response.message()}"
+                }
+
+                Resource.Error(errorMessage)
             }
         } catch (e: Exception) {
             Resource.Error("Failed to get object details: ${e.message}")
@@ -78,7 +98,16 @@ class AzureRepositoryImpl @Inject constructor(
                     Resource.Success(it)
                 } ?: Resource.Error("No data received")
             } else {
-                Resource.Error("Error: ${response.code()} - ${response.message()}")
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    val json = JSONObject(errorBody ?: "")
+                    val error = json.optString("error")
+                    val details = json.optString("details")
+                    if (details.isNotEmpty()) "$error\nDetails: $details" else error
+                } catch (_: Exception) {
+                    "Error: ${response.code()} - ${response.message()}"
+                }
+                Resource.Error(errorMessage)
             }
         } catch (e: Exception) {
             Resource.Error("Failed to generate lesson: ${e.message}")
@@ -104,7 +133,17 @@ class AzureRepositoryImpl @Inject constructor(
                     Resource.Success(it)
                 } ?: Resource.Error("No data received")
             } else {
-                Resource.Error("Error: ${response.code()} - ${response.message()}")
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    val json = JSONObject(errorBody ?: "")
+                    val error = json.optString("error")
+                    val details = json.optString("details")
+                    if (details.isNotEmpty()) "$error\nDetails: $details" else error
+                } catch (_: Exception) {
+                    "Error: ${response.code()} - ${response.message()}"
+                }
+
+                Resource.Error(errorMessage)
             }
         } catch (e: Exception) {
             Resource.Error("Failed to assess pronunciation: ${e.message}")

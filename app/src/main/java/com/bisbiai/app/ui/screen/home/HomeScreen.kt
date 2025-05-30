@@ -61,6 +61,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     userProgressViewModel: UserProgressViewModel,
     onGoToObjectDetails: (GetObjectDetailsResponse) -> Unit,
+    onGoToFlashcard: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -245,7 +246,8 @@ fun HomeScreen(
                             )
                         )
                     }
-                }
+                },
+                onFlashcardClick = onGoToFlashcard
             )
 
             val showDetectionDialog = state.imageFile != null &&

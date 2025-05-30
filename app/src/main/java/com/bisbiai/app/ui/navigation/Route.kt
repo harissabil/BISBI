@@ -14,6 +14,9 @@ sealed class Route {
     data object Home : Route()
 
     @Serializable
+    data object Flashcard : Route()
+
+    @Serializable
     data object VisualLens : Route()
 
     @Serializable

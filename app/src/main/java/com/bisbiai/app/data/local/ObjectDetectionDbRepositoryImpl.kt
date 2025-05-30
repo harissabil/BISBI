@@ -73,6 +73,10 @@ class ObjectDetectionDbRepositoryImpl @Inject constructor(
         return objectDetectionDao.getAllObjectsWithDetails()
     }
 
+    override suspend fun getAllDetectedObjectDetails(): List<ObjectDetailsEntity> {
+        return objectDetectionDao.getAllDetectedObjectDetails()
+    }
+
     override fun getDetailsWithRelatedDataByObjectId(objectId: Long): Flow<DetailsWithRelatedData?> {
         return objectDetectionDao.getDetailsWithRelatedDataByObjectId(objectId)
     }

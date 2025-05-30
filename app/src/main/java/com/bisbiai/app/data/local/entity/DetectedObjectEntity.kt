@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.bisbiai.app.data.local.converter.DetectObjectsConverter
 import com.bisbiai.app.data.local.converter.InstantConverter
+import com.bisbiai.app.data.remote.dto.DetectObjectItem
 import com.bisbiai.app.data.remote.dto.DetectObjectsResponse
 import kotlinx.datetime.Instant
 
@@ -13,7 +14,7 @@ data class DetectedObjectEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @TypeConverters(DetectObjectsConverter::class)
-    val detectObjects: List<DetectObjectsResponse>,
+    val detectObjects: DetectObjectsResponse,
     val imagePath: String,
     @TypeConverters(InstantConverter::class)
     val timestamp: Instant,

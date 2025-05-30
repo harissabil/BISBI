@@ -39,6 +39,7 @@ import com.bisbiai.app.ui.UserProgressViewModel
 import com.bisbiai.app.ui.components.AchievementUnlockedDialog
 import com.bisbiai.app.ui.navigation.components.CustomNavigationBar
 import com.bisbiai.app.ui.screen.auth.AuthScreen
+import com.bisbiai.app.ui.screen.flashcard.FlashcardScreen
 import com.bisbiai.app.ui.screen.home.HomeScreen
 import com.bisbiai.app.ui.screen.profile.ProfileScreen
 import com.bisbiai.app.ui.screen.scenario_detail.ScenarioDetailScreen
@@ -84,7 +85,8 @@ fun NavGraph(
         Route.VoiceGym,
         Route.Profile,
         Route.VisualLensDetail(""),
-        Route.ScenarioDetail("")
+        Route.ScenarioDetail(""),
+        Route.Flashcard,
     )
     val navigationBarItems = remember {
         listOf(
@@ -125,6 +127,7 @@ fun NavGraph(
             Route.Auth -> false
             is Route.VisualLensDetail -> false
             is Route.ScenarioDetail -> false
+            Route.Flashcard -> false
             else -> true
         }
     }
@@ -186,7 +189,15 @@ fun NavGraph(
                         // Convert object to JSON string
                         val objectDetailsJson = Json.encodeToString(objectDetails)
                         navController.navigate(Route.VisualLensDetail(objectDetailsJson))
-                    }
+                    },
+                    onGoToFlashcard = {
+                        navController.navigate(Route.Flashcard)
+                    },
+                )
+            }
+            composable<Route.Flashcard> {
+                FlashcardScreen(
+                    onNavigateUp = { navController.navigateUp() },
                 )
             }
             composable<Route.VisualLens> {

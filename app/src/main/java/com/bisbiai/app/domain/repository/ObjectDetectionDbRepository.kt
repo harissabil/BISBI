@@ -38,6 +38,7 @@ interface ObjectDetectionDbRepository {
 
     // Query operations
     fun getAllObjectsWithDetails(): Flow<List<ObjectWithDetails>>
+    suspend fun getAllDetectedObjectDetails(): List<ObjectDetailsEntity>
     fun getDetailsWithRelatedDataByObjectId(objectId: Long): Flow<DetailsWithRelatedData?>
     fun getAllScenarios(): Flow<List<ScenarioEntity>>
     suspend fun getScenarioById(id: Long): ScenarioEntity?

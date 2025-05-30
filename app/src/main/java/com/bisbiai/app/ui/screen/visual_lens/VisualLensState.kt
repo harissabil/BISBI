@@ -11,7 +11,7 @@ data class VisualLensState(
     val imageFile: File? = null,
     val originalImageWidth: Int? = null,
     val originalImageHeight: Int? = null,
-    val detectedObjects: List<DetectObjectsResponse>? = null,
+    val detectedObjects: DetectObjectsResponse? = null,
     val objectDetails: GetObjectDetailsResponse? = null,
     val isGoingToDetails: Boolean = false,
     val lat: Double? = null,

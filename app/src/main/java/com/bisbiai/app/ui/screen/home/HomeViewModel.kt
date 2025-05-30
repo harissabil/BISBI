@@ -15,7 +15,7 @@ import com.bisbiai.app.data.local.entity.RelatedAdjectiveEntity
 import com.bisbiai.app.data.local.relation.ObjectWithDetails
 import com.bisbiai.app.data.location.LocationHelper
 import com.bisbiai.app.data.mapper.toGetObjectDetailsResponse
-import com.bisbiai.app.data.remote.dto.DetectObjectsResponse
+import com.bisbiai.app.data.remote.dto.DetectObjectItem
 import com.bisbiai.app.domain.repository.AzureRepository
 import com.bisbiai.app.domain.repository.ObjectDetectionDbRepository
 import com.bisbiai.app.domain.usecases.GetLocationUseCase
@@ -149,7 +149,7 @@ class HomeViewModel @Inject constructor(
 
     fun getObjectDetails(
         objectWithDetails: ObjectWithDetails,
-        detectObjectsResponse: DetectObjectsResponse,
+        detectObjectsResponse: DetectObjectItem,
     ) = viewModelScope.launch {
         if (_state.value.isDialogLoading) return@launch
 

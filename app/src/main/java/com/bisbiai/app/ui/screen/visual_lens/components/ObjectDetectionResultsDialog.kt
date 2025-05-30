@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
+import com.bisbiai.app.data.remote.dto.DetectObjectItem
 import com.bisbiai.app.data.remote.dto.DetectObjectsResponse
 import com.bisbiai.app.ui.components.FullScreenLoading
 import top.yukonga.miuix.kmp.basic.Surface
@@ -44,12 +45,12 @@ import java.io.File
 @Composable
 fun ObjectDetectionResultsDialog(
     imageFile: File,
-    detectionResult: List<DetectObjectsResponse>,
+    detectionResult: DetectObjectsResponse,
     originalImageWidth: Int,
     originalImageHeight: Int,
     isLoading: Boolean,
     onDismissRequest: () -> Unit,
-    onObjectClick: (DetectObjectsResponse) -> Unit,
+    onObjectClick: (DetectObjectItem) -> Unit,
 ) {
     val painter = rememberAsyncImagePainter(model = imageFile)
 
@@ -83,7 +84,7 @@ fun ObjectDetectionResultsDialog(
                         .padding(bottom = 16.dp)
                 )
 
-                if (isLoading && detectionResult.isEmpty()) {
+                if (isLoading && detectionResult.predictions.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -107,7 +108,7 @@ fun ObjectDetectionResultsDialog(
                                     val scaleX = size.width / originalImageWidth.toFloat()
                                     val scaleY = size.height / originalImageHeight.toFloat()
 
-                                    detectionResult.forEach { result ->
+                                    detectionResult.predictions.forEach { result ->
                                         val rect = result.boundingBox
                                         val scaledRect = RectF(
                                             rect.x * scaleX,
@@ -130,7 +131,7 @@ fun ObjectDetectionResultsDialog(
                                 val scaleY = size.height / originalImageHeight.toFloat()
                                 val cornerRadiusPx = 8.dp.toPx() // Radius untuk sudut kotak
 
-                                detectionResult.forEach { result ->
+                                detectionResult.predictions.forEach { result ->
                                     val rect = result.boundingBox
                                     val left = rect.x * scaleX
                                     val top = rect.y * scaleY
@@ -207,7 +208,7 @@ fun ObjectDetectionResultsDialog(
                         }
                     }
 
-                    if (!isLoading && detectionResult.isEmpty()) {
+                    if (!isLoading && detectionResult.predictions.isEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "No objects detected in this image.", // "No objects detected in this image."
