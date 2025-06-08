@@ -49,6 +49,7 @@ import com.bisbiai.app.BuildConfig
 import com.bisbiai.app.R
 import com.bisbiai.app.ui.components.FullScreenLoading
 import com.bisbiai.app.ui.screen.auth.components.OnboardingCard
+import com.bisbiai.app.ui.screen.auth.components.OnboardingImage
 import com.bisbiai.app.ui.theme.spacing
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -128,14 +129,14 @@ fun AuthScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Box(modifier = modifier.fillMaxSize()) {
-//            OnboardingImage(
-//                painterId = R.drawable.bisbi_promo
-//            )
-            Box(
-                modifier
-                    .fillMaxSize()
-                    .background(MiuixTheme.colorScheme.primary)
+            OnboardingImage(
+                painterId = R.drawable.onboarding
             )
+//            Box(
+//                modifier
+//                    .fillMaxSize()
+//                    .background(MiuixTheme.colorScheme.primary)
+//            )
 
             Column(
                 modifier = Modifier
