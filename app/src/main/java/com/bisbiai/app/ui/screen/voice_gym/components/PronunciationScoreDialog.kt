@@ -140,10 +140,12 @@ fun PronunciationScoreDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    ScoreDetailItem("Completeness", completenessScore, Modifier.weight(1f))
-                    ScoreDetailItem("Prosody", prosodyScore, Modifier.weight(1f))
+                    Box(modifier = Modifier.fillMaxWidth(0.5f), contentAlignment = Alignment.Center) {
+                        ScoreDetailItem("Completeness", completenessScore, Modifier.fillMaxWidth())
+                    }
+//                    ScoreDetailItem("Prosody", prosodyScore, Modifier.weight(1f))
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))

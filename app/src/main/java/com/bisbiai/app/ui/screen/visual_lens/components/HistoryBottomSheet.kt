@@ -122,7 +122,7 @@ fun HistoryItem(
     onDeleteClick: () -> Unit
 ) {
     val objectNames = remember(detectedObject.detectObjects.predictions) {
-        detectedObject.detectObjects.predictions.joinToString(", ") { it.objectName }.ifEmpty { "No objects detected" }
+        detectedObject.detectObjects.predictions?.joinToString(", ") { it.objectName }?.ifEmpty { "No objects detected" }
     }
     val formattedTimestamp = remember(detectedObject.timestamp) {
         detectedObject.timestamp.toDdMmYyyyHhMmSs()
@@ -145,7 +145,7 @@ fun HistoryItem(
                     .data(detectedObject.imagePath)
                     .crossfade(true)
                     .build(),
-                contentDescription = "Gambar ${objectNames.take(20)}",
+                contentDescription = "Gambar ${objectNames?.take(20)}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(72.dp)
@@ -170,7 +170,7 @@ fun HistoryItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = objectNames,
+                    text = objectNames.toString(),
                     style = MiuixTheme.textStyles.title4,
                     fontWeight = FontWeight.Medium,
                     maxLines = 2,

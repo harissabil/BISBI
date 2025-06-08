@@ -84,7 +84,7 @@ fun ObjectDetectionResultsDialog(
                         .padding(bottom = 16.dp)
                 )
 
-                if (isLoading && detectionResult.predictions.isEmpty()) {
+                if (isLoading && detectionResult.predictions?.isEmpty() == true) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -108,7 +108,7 @@ fun ObjectDetectionResultsDialog(
                                     val scaleX = size.width / originalImageWidth.toFloat()
                                     val scaleY = size.height / originalImageHeight.toFloat()
 
-                                    detectionResult.predictions.forEach { result ->
+                                    detectionResult.predictions?.forEach { result ->
                                         val rect = result.boundingBox
                                         val scaledRect = RectF(
                                             rect.x * scaleX,
@@ -131,7 +131,7 @@ fun ObjectDetectionResultsDialog(
                                 val scaleY = size.height / originalImageHeight.toFloat()
                                 val cornerRadiusPx = 8.dp.toPx() // Radius untuk sudut kotak
 
-                                detectionResult.predictions.forEach { result ->
+                                detectionResult.predictions?.forEach { result ->
                                     val rect = result.boundingBox
                                     val left = rect.x * scaleX
                                     val top = rect.y * scaleY
@@ -208,7 +208,7 @@ fun ObjectDetectionResultsDialog(
                         }
                     }
 
-                    if (!isLoading && detectionResult.predictions.isEmpty()) {
+                    if (!isLoading && detectionResult.predictions?.isEmpty() == true) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "No objects detected in this image.", // "No objects detected in this image."
