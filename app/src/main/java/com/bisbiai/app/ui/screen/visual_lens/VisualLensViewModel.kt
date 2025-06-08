@@ -78,9 +78,13 @@ class VisualLensViewModel @Inject constructor(
                 if (lat != null && long != null) {
                     // Save detected objects to database
                     response.data?.let { detectedObjects ->
+                        val filteredDetectedObjectList = detectedObjects.predictions?.filter {
+                            it.confidence > 0.8
+                        }
+                        val filteredDetectedObjects = detectedObjects.copy(predictions = filteredDetectedObjectList)
                         val detectedObjectId = objectDetectionDbRepository.saveDetectedObject(
                             detectedObject = DetectedObjectEntity(
-                                detectObjects = detectedObjects,
+                                detectObjects = filteredDetectedObjects,
                                 imagePath = imageFile.absolutePath,
                                 timestamp = Clock.System.now(),
                                 lat = lat,
@@ -94,9 +98,14 @@ class VisualLensViewModel @Inject constructor(
                 }
 
                 _state.update {
+                    val filteredDetectedObjectList = response.data?.predictions?.filter {
+                        it.confidence > 0.8
+                    }
+                    val filteredDetectedObjects = response.data?.copy(predictions = filteredDetectedObjectList)
+
                     it.copy(
                         isLoading = false,
-                        detectedObjects = response.data,
+                        detectedObjects = filteredDetectedObjects,
                         imageFile = imageFile,
                         originalImageWidth = originalWidth,
                         originalImageHeight = originalHeight
