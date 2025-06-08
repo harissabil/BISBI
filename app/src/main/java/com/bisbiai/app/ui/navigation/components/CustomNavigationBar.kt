@@ -30,15 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.NavigationBar
-import top.yukonga.miuix.kmp.basic.NavigationItem
 import top.yukonga.miuix.kmp.basic.Surface
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -58,7 +57,7 @@ import top.yukonga.miuix.kmp.utils.platform
  */
 @Composable
 fun CustomNavigationBar(
-    items: List<NavigationItem>,
+    items: List<CustomNavigationItem>,
     selected: Int,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -129,11 +128,11 @@ fun CustomNavigationBar(
                     ) {
                         Image(
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(48.dp)
                                 .padding(top = 6.dp),
-                            imageVector = item.icon,
+                            painter = painterResource(item.icon),
                             contentDescription = item.label,
-                            colorFilter = ColorFilter.tint(tint)
+//                            colorFilter = ColorFilter.tint(tint)
                         )
                         Text(
                             modifier = Modifier.padding(bottom = if (platform() != Platform.IOS) 12.dp else 0.dp),
@@ -160,3 +159,8 @@ fun CustomNavigationBar(
         }
     }
 }
+
+data class CustomNavigationItem(
+    val label: String,
+    val icon: Int,
+)

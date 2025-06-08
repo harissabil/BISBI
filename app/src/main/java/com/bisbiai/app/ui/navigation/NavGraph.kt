@@ -7,12 +7,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CameraAlt
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.MicNone
-import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,12 +26,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.bisbiai.app.R
 import com.bisbiai.app.data.local.entity.AchievementEntity
 import com.bisbiai.app.data.remote.dto.GenerateLessonResponse
 import com.bisbiai.app.data.remote.dto.GetObjectDetailsResponse
 import com.bisbiai.app.ui.UserProgressViewModel
 import com.bisbiai.app.ui.components.AchievementUnlockedDialog
 import com.bisbiai.app.ui.navigation.components.CustomNavigationBar
+import com.bisbiai.app.ui.navigation.components.CustomNavigationItem
 import com.bisbiai.app.ui.screen.auth.AuthScreen
 import com.bisbiai.app.ui.screen.flashcard.FlashcardScreen
 import com.bisbiai.app.ui.screen.home.HomeScreen
@@ -49,7 +45,6 @@ import com.bisbiai.app.ui.screen.visual_lens_detail.VisualLensDetailScreen
 import com.bisbiai.app.ui.screen.voice_gym.VoiceGymScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.Json
-import top.yukonga.miuix.kmp.basic.NavigationItem
 import top.yukonga.miuix.kmp.basic.Scaffold
 
 @Composable
@@ -90,25 +85,25 @@ fun NavGraph(
     )
     val navigationBarItems = remember {
         listOf(
-            NavigationItem(
+            CustomNavigationItem(
                 label = "Home",
-                icon = Icons.Outlined.Home
+                icon = R.drawable.home
             ),
-            NavigationItem(
-                label = "Visual Lens",
-                icon = Icons.Outlined.CameraAlt
+            CustomNavigationItem(
+                label = "Scan",
+                icon = R.drawable.scan
             ),
-            NavigationItem(
-                label = "Scenarios",
-                icon = Icons.Outlined.ChatBubbleOutline
+            CustomNavigationItem(
+                label = "Scene",
+                icon = R.drawable.scene
             ),
-            NavigationItem(
-                label = "Voice Gym",
-                icon = Icons.Outlined.MicNone
+            CustomNavigationItem(
+                label = "Voice",
+                icon = R.drawable.voice
             ),
-            NavigationItem(
+            CustomNavigationItem(
                 label = "Profile",
-                icon = Icons.Outlined.PersonOutline
+                icon = R.drawable.profile
             )
         )
     }
