@@ -68,7 +68,7 @@ fun FlashcardScreen(
     }
 
     Scaffold(
-        topBar = { BaseTopAppBar(onNavigateUp = onNavigateUp, title = "Flashcard") },
+        topBar = { BaseTopAppBar(onNavigateUp = onNavigateUp, title = "BISBI Boost") },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         if (state.flashcards.isNotEmpty()) {

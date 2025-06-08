@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class DetectObjectsResponse(
     @SerializedName("predictions")
-    val predictions: List<DetectObjectItem>,
+    val predictions: List<DetectObjectItem>?,
 )
 
 data class DetectObjectItem(

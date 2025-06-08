@@ -69,7 +69,7 @@ fun ScenarioDetailScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             BaseTopAppBar(
-                title = "Scenario Lesson",
+                title = "Scene Lesson",
                 onNavigateUp = onNavigateUp
             )
         },

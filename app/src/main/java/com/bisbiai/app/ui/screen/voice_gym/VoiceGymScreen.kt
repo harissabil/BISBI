@@ -139,7 +139,7 @@ fun VoiceGymScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Voice Gym",
+                text = "BISBI Voice",
                 style = MiuixTheme.textStyles.title2,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 24.dp)

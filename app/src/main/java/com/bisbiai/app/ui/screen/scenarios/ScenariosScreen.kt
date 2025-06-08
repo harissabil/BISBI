@@ -102,7 +102,7 @@ fun ScenariosScreen(
         ) {
             item {
                 Text(
-                    text = "Scenario Challenge",
+                    text = "BISBI Scene",
                     style = MiuixTheme.textStyles.title2,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 24.dp)
